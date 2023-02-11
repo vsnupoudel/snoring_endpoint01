@@ -1,0 +1,30 @@
+<!-- Store this code in 'login.html' file inside the 'templates' folder -->
+
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title> Upload </title>
+		<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">		
+	</head>
+	<body></br></br></br></br></br>
+		<div align="center">
+		<div align="center" class="border">
+			<div class="header">
+				<h1 class="word">Upload</h1>
+			</div></br></br></br>
+			<h2 class="word">
+				
+				<div class="msg">{{ msg  }}</div>
+				<div class="session">{{  session }}</div>
+                <form action = "/upload" method = "POST"  enctype = "multipart/form-data">
+                    <input type = "file" name = file multiple id="file" class="btn"/>
+                    <input type = "submit" name= "submit" id="submit" class="btn"/>
+				</form>
+			</h2>
+			
+		</div>
+		<a href="{{ url_for('download') }}" class="btn">Download</a>
+		<a href="{{ url_for('logout') }}" class="btn">Log Out</a>
+		</div>
+	</body>
+</html>

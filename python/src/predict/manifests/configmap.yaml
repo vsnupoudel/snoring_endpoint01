@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: predict-configmap
+data:
+  MONGO_SVC_ADDRESS : "mongodb://mongodb-0.mongodb:27017/wav?replicaSet=rs0"
+  MYSQL_HOST: mysql-0.mysql #host.minikube.internal
+  # MYSQL_USER: root
+  # MYSQL_PASSWORD: pwd
+  MYSQL_DB: test
+  MYSQL_PORT: "3306"

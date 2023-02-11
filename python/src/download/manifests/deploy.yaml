@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: download
+  labels:
+    app: download
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: download
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 2
+  template:
+    metadata:
+      labels:
+        app: download
+    spec:
+      containers:
+        - name: download
+          image: bishnupoudel/download:v1
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: download-configmap

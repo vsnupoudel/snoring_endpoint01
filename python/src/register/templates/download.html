@@ -1,0 +1,28 @@
+<!-- Store this code in 'download.html' file inside the 'templates' folder -->
+
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title> Download </title>
+		<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">		
+	</head>
+	<body></br></br></br></br></br>
+		<div align="center">
+		<div align="center" class="border">
+			<div class="header">
+				<h1 class="word"> Download </h1>
+			</div></br></br></br>
+			<div> <img src="..\static\image\Loading_icon.gif"   width="100" height="100"/>  </div>
+			<h2 class="word">
+				<div class="msg">{{ msg }}</div>
+				<div class="session">{{  session['email'] }}</div>
+                <form action = '/download' method = 'POST'  >
+                    <input type = "submit" name= "submit" id="submit" class="btn"/>
+				</form>
+			</h2>
+			<a href="{{ url_for('upload') }}" class="btn">Upload</a>
+			<a href="{{ url_for('login') }}" class="btn">LogIn</a>
+		</div>
+		</div>
+	</body>
+</html>

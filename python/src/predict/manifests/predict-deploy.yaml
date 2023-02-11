@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: predict
+  labels:
+    app: predict
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: predict
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 2
+  template:
+    metadata:
+      labels:
+        app: predict
+    spec:
+      containers:
+        - name: predict
+          image: bishnupoudel/predict:runs04
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: predict-configmap
+            - secretRef:
+                name: predict-secret
