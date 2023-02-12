@@ -81,7 +81,6 @@ def main(all_rows):
         myobj = { "instances": waveform }
         results = requests.post(url, json = myobj)
         results = json.loads(results.text)['predictions']
-        print(results)
         if results[0] > results[1]:
             e = update_mysql(gridfs_object_id)
             if e:

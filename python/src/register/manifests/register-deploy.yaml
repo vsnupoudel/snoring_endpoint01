@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: register
-          image: bishnupoudel/register:download01
+          image: bishnupoudel/register:download02
           imagePullPolicy: IfNotPresent
           envFrom:
             - configMapRef:

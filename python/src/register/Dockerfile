@@ -5,6 +5,7 @@ RUN apt-get update \
   --no-install-suggests build-essential \
   && pip install --no-cache-dir --upgrade pip
 RUN apt-get install -y default-libmysqlclient-dev
+RUN apt-get install -y curl nano vim
 
 WORKDIR /app
 COPY ./requirements.txt /app/

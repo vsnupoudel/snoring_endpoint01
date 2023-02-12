@@ -9,6 +9,7 @@ from storage import util
 from flask_pymongo import PyMongo
 import gridfs
 import requests
+from bson import ObjectId
 
 app = Flask(__name__)
 app.secret_key = 'TODO'
@@ -21,6 +22,12 @@ mysql = MySQL(app)
 mongo_wav = PyMongo(app,
         uri= "{}".format(os.environ.get("MONGO_SVC_ADDRESS")) )
 fs_wav = gridfs.GridFS(mongo_wav.db)
+
+def save_file(results, file_object_id):
+	with open( file_object_id+'.wav' , 'wb') as fd:
+		for chunk in results.iter_content(chunk_size=128):
+			fd.write(chunk)
+	return file_object_id+'.wav'
 
 @app.route('/')
 def index():
@@ -96,50 +103,53 @@ def upload(msg=None):
 
 @app.route('/download', methods=['GET','POST'])
 def download():
-	def generate(listout):
-		for i, out_file in enumerate(listout):
-			yield str(  out_file.read() )[:100]
-			# with open("my_file.wav", "wb") as binary_file:
-			# 	# Write bytes to file
-			# 	binary_file.write(out_file.read())
-			yield send_file( out_file  , download_name = str(i))
+	# def generate(listout):
+	# 	for i, out_file in enumerate(listout):
+	# 		yield str(  out_file.read() )[:100]
+	# 		# with open("my_file.wav", "wb") as binary_file:
+	# 		# 	# Write bytes to file
+	# 		# 	binary_file.write(out_file.read())
+	# 		yield send_file( out_file  , download_name = str(i))
 		
-	msg = 'None'
+	msg = None
 	if request.method == 'POST':
 		cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-		query = "SELECT 1 FROM file_list_24hr WHERE predicted is NULL AND user_email = '{}';".format( session['email'])
-		c = cursor.execute(query)
+		query = "SELECT 1 FROM file_list_24hr WHERE predicted is NULL AND user_email = '{}' LIMIT 1;".format( session['email'])
+		c = cursor.execute(query); counter = 0
 		# async await #TODO:
 		while c > 0:
+			sleep(30)
 			c = cursor.execute(query)
+			counter += 1
+			if counter >= 10:
+				return 'Timed out waiting for predictions, db not updated' , 408
+		
+		query = "SELECT file_object_id FROM file_list_24hr WHERE predicted=1 AND user_email = '{}';".format( session['email'])
+		c = cursor.execute(query)
+		file_object_list_dict = cursor.fetchall()
 		cursor.close()
-
-		listout = util.download(fs_wav, session, mysql)
-		if type(listout) == list:
-			# return Response( stream_with_context( generate(listout) ) )	
-			return send_file( listout[0] , download_name= 'download.wav')
-		# url = 'http://127.0.0.1:8080/download_file'
-		# myobj = { "instances": listout }
-		# results = requests.post(url, data = listout)	
-		# return str(results.text)
-		else:
-			return render_template('download.html', msg = 'listout:\n'+str(listout) )
-	return render_template('download.html', msg = "Download positive cases")
-
-# @app.route('/download_file', methods=['GET','POST'])
-# def download_file():
-# 	if request.method == 'POST':
-# 		filename = request.files.get('file')
-# 		# filename = args.get('filename')
-# 		return send_file(filename, download_name= str(filename.filename)+'.wav' or 'download.wav')
-	
-@app.route('/stream')
-def streamed_response():
-    def generate():
-        yield 'Hello '
-        yield request.args['name']
-        yield '!'
-    return Response(stream_with_context(generate()))
+		# listout = util.download(fs_wav, session, mysql)
+		# curl http://download:8090/download?file_object_id='63e697e4504cb15d6f532168' --output download.wav
+		try:
+			for file_object_dict in file_object_list_dict:
+				file_object_id = file_object_dict['file_object_id']
+				runthis = "curl http://download:8090/download?file_object_id={} --output {}.wav".format(file_object_id,file_object_id)
+				# url = 'http://download:8090/download'
+				# myobj = { "instances": listout }
+				# results = requests.get(url, params=  {'file_object_id':file_object_id},  stream=True)
+				# filename = save_file(results, file_object_id)
+				# with open( file_object_id+'.wav' , 'wb') as fd:
+				# 	for chunk in results.iter_content(chunk_size=128):
+				# 		fd.write(chunk)
+				os.system(runthis)
+			#TODO # Now zip all here and return the zip file
+			filename = file_object_id+'.wav'
+			return send_file('./'+filename, download_name=filename)
+			# return render_template('download.html', msg = results.status_code)								
+		except Exception as e:
+			return render_template('download.html', msg = e)
+	else:
+		return render_template('download.html', msg = "Download positive cases")
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8080)

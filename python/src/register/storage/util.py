@@ -31,20 +31,20 @@ def upload(fs_wav, fileObj, session, mysql) :
         except Exception as e:
             return e
         
-def download(fs_wav, session, mysql) :
-    try:
-        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        c = cursor.execute('SELECT file_object_id FROM file_list_24hr WHERE user_email = % s AND predicted = 1', (session['email'] , ) )
-        file_object_id_list = cursor.fetchall()
-        cursor.close()
-        # return file_object_id_list
-        if c:
-            # return fs_wav.get(ObjectId( file_object_id_list['file_object_id']) )
-            return [ fs_wav.get(ObjectId(file_id_dict['file_object_id'])) for file_id_dict in file_object_id_list]
-        else:
-            return None
-    except Exception as e:
-        return e
+# def download(fs_wav, session, mysql) :
+#     try:
+#         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+#         c = cursor.execute('SELECT file_object_id FROM file_list_24hr WHERE user_email = % s AND predicted = 1', (session['email'] , ) )
+#         file_object_id_list = cursor.fetchall()
+#         cursor.close()
+#         # return file_object_id_list
+#         if c:
+#             # return fs_wav.get(ObjectId( file_object_id_list['file_object_id']) )
+#             return [ fs_wav.get(ObjectId(file_id_dict['file_object_id'])) for file_id_dict in file_object_id_list]
+#         else:
+#             return None
+#     except Exception as e:
+#         return e
 
         
 
