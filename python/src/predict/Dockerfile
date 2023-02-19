@@ -8,5 +8,5 @@ COPY ./requirements.txt /app/
 RUN pip install --no-cache-dir --requirement /app/requirements.txt
 COPY . /app
 
-CMD ["sh", "-c", "tail -f /dev/null"]
-# CMD ["python", "predict.py"]
+# CMD ["sh", "-c", "tail -f /dev/null"]
+CMD ["python", "predict.py"]

@@ -1,0 +1,62 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    ingress.kubernetes.io/backends: '{"k8s1-b8eff0ad-default-register-8080-a691dcb8":"Unknown"}'
+    ingress.kubernetes.io/forwarding-rule: k8s2-fr-n2ktpirq-default-externallb-f60v0zqz
+    ingress.kubernetes.io/target-proxy: k8s2-tp-n2ktpirq-default-externallb-f60v0zqz
+    ingress.kubernetes.io/url-map: k8s2-um-n2ktpirq-default-externallb-f60v0zqz
+  creationTimestamp: "2023-02-13T19:47:39Z"
+  finalizers:
+  - networking.gke.io/ingress-finalizer-V2
+  generation: 1
+  managedFields:
+  - apiVersion: networking.k8s.io/v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:spec:
+        f:defaultBackend:
+          .: {}
+          f:service:
+            .: {}
+            f:name: {}
+            f:port:
+              .: {}
+              f:number: {}
+    manager: GoogleCloudConsole
+    operation: Update
+    time: "2023-02-13T19:47:39Z"
+  - apiVersion: networking.k8s.io/v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:metadata:
+        f:annotations:
+          .: {}
+          f:ingress.kubernetes.io/backends: {}
+          f:ingress.kubernetes.io/forwarding-rule: {}
+          f:ingress.kubernetes.io/target-proxy: {}
+          f:ingress.kubernetes.io/url-map: {}
+        f:finalizers:
+          .: {}
+          v:"networking.gke.io/ingress-finalizer-V2": {}
+      f:status:
+        f:loadBalancer:
+          f:ingress: {}
+    manager: glbc
+    operation: Update
+    subresource: status
+    time: "2023-02-13T19:48:35Z"
+  name: externallb
+  namespace: default
+  resourceVersion: "322744"
+  uid: a8ddbe2d-02bd-4fc9-94a6-0e1dd98977cf
+spec:
+  defaultBackend:
+    service:
+      name: register
+      port:
+        number: 8080
+status:
+  loadBalancer:
+    ingress:
+    - ip: 34.117.78.236

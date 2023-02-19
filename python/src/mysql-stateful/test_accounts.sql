@@ -13,7 +13,7 @@ INSERT INTO accounts VALUES(
 "Bishnu","Poudel","vsnupoudel","replytobishnu@gmail.com","bpoudel");
 
 # Table to user and the mongodb Object ID for 24 hours
-create table file_list_24hr
+create table if not exists file_list_24hr
 (
 id int not null auto_increment primary key,
 user_email VARCHAR(255) NOT NULL, 
