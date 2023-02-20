@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: register
-          image: bishnupoudel/register:download02
+          image: us-central1-docker.pkg.dev/turnkey-banner-371806/hello-repo/register:pd
           imagePullPolicy: IfNotPresent
           envFrom:
             - configMapRef:

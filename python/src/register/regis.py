@@ -3,9 +3,9 @@ from flask import Flask, render_template, request, redirect, url_for, session
 from flask import send_file, stream_with_context, Response
 from flask_mysqldb import MySQL
 import MySQLdb.cursors
-import re, os, json
+import re, os, json, zipfile
 from time import sleep
-from storage import util
+from storage import util, predict, download
 from flask_pymongo import PyMongo
 import gridfs
 import requests
@@ -97,20 +97,14 @@ def upload(msg=None):
     if request.method == 'POST':
         fileObjects = request.files.getlist('file')			
         filenames = [ util.upload(fs_wav, fileObj, session, mysql)  for fileObj in fileObjects ]
-        # Wait till predictions are available #TODO 
-        return render_template('download.html', msg = str(len(filenames))+' uploaded for '+session['email']+'->downloading...')
+        # Wait till predictions are available
+        predict_str = str( predict.main(user_email = session['email']) )
+        return render_template('download.html', msg = str(len(filenames))+' uploaded for '
+			       +session['email']+' and '+predict_str)
     return  render_template('upload.html', msg = msg)
 
 @app.route('/download', methods=['GET','POST'])
 def download():
-	# def generate(listout):
-	# 	for i, out_file in enumerate(listout):
-	# 		yield str(  out_file.read() )[:100]
-	# 		# with open("my_file.wav", "wb") as binary_file:
-	# 		# 	# Write bytes to file
-	# 		# 	binary_file.write(out_file.read())
-	# 		yield send_file( out_file  , download_name = str(i))
-		
 	msg = None
 	if request.method == 'POST':
 		cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
@@ -128,26 +122,24 @@ def download():
 		c = cursor.execute(query)
 		file_object_list_dict = cursor.fetchall()
 		cursor.close()
-		# listout = util.download(fs_wav, session, mysql)
-		# curl http://download:8090/download?file_object_id='63e697e4504cb15d6f532168' --output download.wav
 		try:
 			for file_object_dict in file_object_list_dict:
 				file_object_id = file_object_dict['file_object_id']
 				runthis = "curl http://download:8090/download?file_object_id={} --output {}.wav".format(file_object_id,file_object_id)
-				# url = 'http://download:8090/download'
-				# myobj = { "instances": listout }
-				# results = requests.get(url, params=  {'file_object_id':file_object_id},  stream=True)
-				# filename = save_file(results, file_object_id)
-				# with open( file_object_id+'.wav' , 'wb') as fd:
-				# 	for chunk in results.iter_content(chunk_size=128):
-				# 		fd.write(chunk)
-				os.system(runthis)
-			#TODO # Now zip all here and return the zip file
-			filename = file_object_id+'.wav'
-			return send_file('./'+filename, download_name=filename)
-			# return render_template('download.html', msg = results.status_code)								
+				os.system(runthis)					
 		except Exception as e:
 			return render_template('download.html', msg = e)
+		
+		try:
+			# list all .wav files in current folder
+			list_files = [ f for f in os.listdir('.') if f.endswith('.wav') ]
+			# zip all .wav files in current folder
+			with zipfile.ZipFile('out.zip', 'w') as zipMe:        
+				for file in list_files:
+					zipMe.write(file, compress_type=zipfile.ZIP_DEFLATED)
+		except Exception as e:
+			return e
+		return send_file( 'out.zip', download_name='out.zip')
 	else:
 		return render_template('download.html', msg = "Download positive cases")
 
