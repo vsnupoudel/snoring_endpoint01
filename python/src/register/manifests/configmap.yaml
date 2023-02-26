@@ -4,7 +4,7 @@ metadata:
   name: register-configmap
 data:
   MONGO_SVC_ADDRESS: "mongodb://mongodb-0.mongodb:27017/wav?replicaSet=rs0" #mongodb://host_one:27017,host_two:27017,host_three:27017/dbName?replicaSet=my-replica-set
-  MYSQL_HOST: mysql-0.mysql #host.minikube.internal
-  # MYSQL_USER: root
+  MYSQL_HOST: 34.121.11.218
+  MYSQL_USER: bpoudel
   MYSQL_DB: test
   MYSQL_PORT: "3306"

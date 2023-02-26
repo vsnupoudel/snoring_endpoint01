@@ -5,7 +5,7 @@ from flask_mysqldb import MySQL
 import MySQLdb.cursors
 import re, os, json, zipfile
 from time import sleep
-from storage import util, predict, download
+from storage import util, predict
 from flask_pymongo import PyMongo
 import gridfs
 import requests
@@ -17,6 +17,8 @@ app.secret_key = 'TODO'
 app.config['MYSQL_HOST'] =   os.environ.get("MYSQL_HOST")
 app.config["MYSQL_PORT"] =   int(os.environ.get("MYSQL_PORT") )
 app.config['MYSQL_DB'] =  os.environ.get("MYSQL_DB")
+app.config['MYSQL_USER'] =  os.environ.get('MYSQL_USER')
+app.config['MYSQL_PASSWORD'] = os.environ.get('MYSQL_PASSWORD')
 mysql = MySQL(app)
 #mongodb
 mongo_wav = PyMongo(app,
