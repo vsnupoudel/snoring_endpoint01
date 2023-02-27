@@ -7,5 +7,5 @@ Following is the project in brief:
 5. Works both on local minikube and Google Cloud - GKE.
 
 # In works.
-- Asynchronous calls to prediction endpoint could improve speed.
+- Asynchronous calls to endpoints could improve speed.
 - Scaling test for real-world use
