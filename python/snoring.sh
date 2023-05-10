@@ -112,5 +112,4 @@ myobj = { "instances": out_file }
 results = requests.get(url, data = myobj)
 
 
-curl -X POST https://reqbin.com/echo/post/form -H "Content-Type: application/x-www-form-urlencoded" -d "username=bpoudel&password=bpoudel" 
 
