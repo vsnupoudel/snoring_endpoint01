@@ -1,6 +1,6 @@
 // Login.js
 import React, { useState } from 'react';
-import './login.css'; // Import the CSS file
+import './Login.css'; // Import the CSS file
 
 const Login = ({ onSubmit, onSignupClick }) => {
   const [identifier, setIdentifier] = useState('');

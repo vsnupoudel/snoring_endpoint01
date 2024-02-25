@@ -1,12 +1,13 @@
 // import logo from './logo.svg';
 import './App.css';
 // import DynamicComponent from './dynamicComponent.js'
-import Login from './login.js'
-import Signup from './signup.js'
+import 'bootstrap/dist/css/bootstrap.min.css';
+import Login from './Login.js'
+import Signup from './Signup.js'
 import { useState } from 'react';
 
 function App() {
-  const [showLogin, setShowLogin] = useState(true);
+  const [showLogin, setShowLogin] = useState(false);
   const [showSignup, setShowSignup] = useState(false);
 
   function handleLogin() {

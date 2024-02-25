@@ -24,6 +24,9 @@ kubectl exec --stdin --tty predict-598d9fd9f4-hww9k -- /bin/bash
 @FOR /f "tokens=*" %i IN ('minikube -p minikube docker-env --shell cmd') DO @%i
 #powershell
 & minikube -p minikube docker-env --shell powershell | Invoke-Expression
+#linux 
+eval $(minikube -p snoring docker-env --shell bash)
+
 
 
 
