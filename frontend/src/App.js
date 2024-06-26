@@ -8,29 +8,20 @@ import { useState } from 'react';
 
 function App() {
   const [showLogin, setShowLogin] = useState(false);
-  const [showSignup, setShowSignup] = useState(false);
+  const [showSignup, setShowSignup] = useState(true);
 
-  function handleLogin() {
-    console.log('handelLogin')
-  }
-  function handleSignupClick() {
-    console.log('handleSignupClick')
-  }
-  function handleSignup() {
-    console.log('handleSignup')
-  }
-  function handleLoginClick() {
-    console.log('handleLoginClick')
-  }
+  const toggleLogin = () => {
+    setShowLogin(!showLogin);
+  };
 
   return (
     <div className="App">
       <header className="App-header">
       <div>
       {showLogin ? (
-        <Login onSubmit={handleLogin} onSignupClick={handleSignupClick} />
+        <Login  />
       ) : (
-        <Signup onSubmit={handleSignup} onLoginClick={handleLoginClick} />
+        <Signup showLogin={showLogin} toggleLogin={toggleLogin}/>
       )}
     </div>
       </header>

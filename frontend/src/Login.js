@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import './Login.css'; // Import the CSS file
 
-const Login = ({ onSubmit, onSignupClick }) => {
+const Login = ({ onSubmit, onSignupClick, msg }) => {
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
 
@@ -13,6 +13,7 @@ const Login = ({ onSubmit, onSignupClick }) => {
 
   return (
     <div>
+      <div>{msg}</div>
       <form onSubmit={handleSubmit}>
         <label>
           Username or Email:

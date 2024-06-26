@@ -1,4 +1,4 @@
-/* Store this code in 'style.css' file inside the 'static' folder*/
+/*need to add css*/
 
 .header{
     padding: 5px 120px;
@@ -28,7 +28,6 @@
 .textbox{
     padding: 10px 40px;
     background-color: #236B8E;
-    text-color: #FFFFFF;
     border-radius: 10px;
 }
     

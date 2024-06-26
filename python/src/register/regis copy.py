@@ -1,0 +1,169 @@
+# Store this code in 'app.py' file
+import os
+from flask import Flask, jsonify, render_template, request, redirect, url_for, session
+from flask import send_file, stream_with_context, Response
+from flask_cors import CORS
+
+# from model.myconnection import connect_to_mysql
+
+# config = {
+#     "host":  os.environ.get("MYSQL_HOST"),
+# 	"port" :  int(os.environ.get("MYSQL_PORT") ) if os.environ.get("MYSQL_PORT")else 0,
+#     "user": os.environ.get('MYSQL_USER'),
+#     "password": os.environ.get('MYSQL_PASSWORD'),
+#     "database": os.environ.get("MYSQL_DB"),
+# }
+
+# from flask_mysqldb import MySQL
+# import MySQLdb.cursors
+# import re, os, json, zipfile
+# from time import sleep
+# from storage import util, predict
+# from flask_pymongo import PyMongo
+# import gridfs
+# import requests
+# from bson import ObjectId
+# import pymysql
+
+app = Flask(__name__)
+app.secret_key = 'TODO'
+CORS(app)
+
+
+# app.config['MYSQL_HOST']    =   os.environ.get("MYSQL_HOST")
+# app.config["MYSQL_PORT"]    =  int(os.environ.get("MYSQL_PORT") )
+# app.config['MYSQL_DB']       =  os.environ.get("MYSQL_DB")
+# app.config['MYSQL_USER']     =  os.environ.get('MYSQL_USER')
+# app.config['MYSQL_PASSWORD'] = os.environ.get('MYSQL_PASSWORD')
+# mysql = MySQL(app)
+
+# #mongodb
+# mongo_wav = PyMongo(app,
+#         uri= "{}".format(os.environ.get("MONGO_SVC_ADDRESS")) )
+# fs_wav = gridfs.GridFS(mongo_wav.db)
+
+# def save_file(results, file_object_id):
+# 	with open( file_object_id+'.wav' , 'wb') as fd:
+# 		for chunk in results.iter_content(chunk_size=128):
+# 			fd.write(chunk)
+# 	return file_object_id+'.wav'
+
+@app.route('/')
+def index():
+    return "Backend routes."
+
+# @app.route('/login', methods =['GET' ,'POST'])
+# def login():
+# 	if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
+# 		username = request.form['username']
+# 		password = request.form['password']
+# 		# cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+# 		# cursor.execute('SELECT * FROM accounts WHERE username = % s AND password = % s', (username, password, ))
+# 		# account = cursor.fetchone()
+# 		# cursor.close()
+
+
+# 		cnx = connect_to_mysql(config, attempts=3)
+
+# 		if cnx and cnx.is_connected():
+# 			with cnx.cursor() as cursor:
+# 				result = cursor.execute('SELECT * FROM accounts WHERE username = % s AND password = % s', (username, password, ))
+# 				account = cursor.fetchone()
+# 			cnx.close()
+	
+# 		if account:
+# 			session['loggedin'] = True
+# 			session['id'] = account['id']
+# 			session['username'] = account['username']
+# 			session['email'] = account['email']
+# 			return 'Logged in successfully !'+session['username']
+# 		else:
+# 			return 'Incorrect username / password !'
+
+
+
+# @app.route('/logout')
+# def logout():
+# 	session.pop('loggedin', None)
+# 	session.pop('id', None)
+# 	session.pop('username', None)
+# 	return redirect(url_for('login'))
+
+@app.route('/register', methods =['GET', 'POST'])
+def register():
+	# try:
+
+	# cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+	# cursor.execute('SELECT * FROM accounts WHERE username = % s', (username, ))
+	# account = cursor.fetchone()
+	# if account:
+	# 	msg = 'Account already exists !'
+	# elif not re.match(r'[^@]+@[^@]+\.[^@]+', email):
+	# 	msg = 'Invalid email address !'
+	# elif not re.match(r'[A-Za-z0-9]+', username):
+	# 	msg = 'Username must contain only characters and numbers !'
+	# elif not username or not password or not email:
+	# 	msg = 'Please fill out the form !'
+	# else:
+	# 	cursor.execute('INSERT INTO accounts VALUES (NULL,% s, % s, % s, % s, % s)', (firstname, lastname_middlenames, username, password, email, ))
+	# 	mysql.connection.commit()
+	# 	cursor.close()
+
+	msg = "No requests yet"
+	return jsonify( { "message": msg } )
+	# return render_template('register.html', msg = msg)
+
+# @app.route('/upload' , methods=['GET','POST'])
+# def upload(msg=None):
+#     msg = 'Please upload the audio file'
+#     if request.method == 'POST':
+#         fileObjects = request.files.getlist('file')			
+#         filenames = [ util.upload(fs_wav, fileObj, session, mysql)  for fileObj in fileObjects ]
+#         # Wait till predictions are available
+#         predict_str = str( predict.main(user_email = session['email']) )
+#         return render_template('download.html', msg = str(len(filenames))+' uploaded for '
+# 			       +session['email']+' and '+predict_str)
+#     return  render_template('upload.html', msg = msg)
+
+# @app.route('/download', methods=['GET','POST'])
+# def download():
+# 	msg = None
+# 	if request.method == 'POST':
+# 		cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+# 		query = "SELECT 1 FROM file_list_24hr WHERE predicted is NULL AND user_email = '{}' LIMIT 1;".format( session['email'])
+# 		c = cursor.execute(query); counter = 0
+# 		# async await #TODO:
+# 		while c > 0:
+# 			sleep(30)
+# 			c = cursor.execute(query)
+# 			counter += 1
+# 			if counter >= 10:
+# 				return 'Timed out waiting for predictions, db not updated' , 408
+		
+# 		query = "SELECT file_object_id FROM file_list_24hr WHERE predicted=1 AND user_email = '{}';".format( session['email'])
+# 		c = cursor.execute(query)
+# 		file_object_list_dict = cursor.fetchall()
+# 		cursor.close()
+# 		try:
+# 			for file_object_dict in file_object_list_dict:
+# 				file_object_id = file_object_dict['file_object_id']
+# 				runthis = "curl http://download:8090/download?file_object_id={} --output {}.wav".format(file_object_id,file_object_id)
+# 				os.system(runthis)					
+# 		except Exception as e:
+# 			return render_template('download.html', msg = e)
+		
+# 		try:
+# 			# list all .wav files in current folder
+# 			list_files = [ f for f in os.listdir('.') if f.endswith('.wav') ]
+# 			# zip all .wav files in current folder
+# 			with zipfile.ZipFile('out.zip', 'w') as zipMe:        
+# 				for file in list_files:
+# 					zipMe.write(file, compress_type=zipfile.ZIP_DEFLATED)
+# 		except Exception as e:
+# 			return e
+# 		return send_file( 'out.zip', download_name='out.zip')
+# 	else:
+# 		return render_template('download.html', msg = "Download positive cases")
+
+if __name__ == "__main__":
+    app.run( port=8080, debug=True)

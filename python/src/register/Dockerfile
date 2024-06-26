@@ -1,8 +1,8 @@
-FROM python:3.10-slim-bullseye
+FROM python:3.11-slim-bullseye
 
 RUN apt-get update \
   && apt-get install -y --no-install-recommends \
-  --no-install-suggests build-essential \
+  --no-install-suggests build-essential pkg-config\
   && pip install --no-cache-dir --upgrade pip
 RUN apt-get install -y default-libmysqlclient-dev
 RUN apt-get install -y curl nano vim

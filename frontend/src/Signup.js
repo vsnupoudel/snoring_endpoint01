@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import './Signup.css';
 
-const Signup = ({ onSubmit }) => {
+const Signup = ( props ) => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [username, setUsername] = useState('');
@@ -13,25 +13,41 @@ const Signup = ({ onSubmit }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (password !== repeatPassword) {
-      console.log('Passwords do not match.');
-      return;
-    }
+    const {  showLogin, toggleLogin} = props;
+
+
+    // Create an object with user data
+    const userData = {
+      firstName,
+      lastName,
+      username,
+      email,
+      password,
+    };
+
+    console.log (JSON.stringify(userData) )
 
     try {
-      // Assuming there's an API function to handle signup
-      const userData = {
-        firstName,
-        lastName,
-        username,
-        email,
-        password,
-      };
+      // Make the API request
+      const response = await fetch('http://localhost:8080/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      });
 
-      // Call the onSubmit function with user data
-      onSubmit(userData);
+      if (response.ok) {
+        // Handle successful response (e.g., show a success message)
+        const text = await response.json();
+        console.log('API response:', text);   
+        toggleLogin();  
+      } else {
+        // Handle errors (e.g., show an error message)
+        console.error('Error registering user:', response.statusText);
+      }
     } catch (error) {
-      console.error('Error during signup:', error);
+      console.error('Error during API call:', error);
     }
   };
 

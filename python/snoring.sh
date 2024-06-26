@@ -16,9 +16,7 @@ kubectl exec --stdin --tty mongodb-0 -- /bin/bash
 kubectl exec -it register-785b4567dd-xmxz2 -- sh
 kubectl exec -it mysql-0 -- sh
 
-
 kubectl exec --stdin --tty predict-598d9fd9f4-hww9k -- /bin/bash
-
 
 # docker change to minikube cli
 @FOR /f "tokens=*" %i IN ('minikube -p minikube docker-env --shell cmd') DO @%i
@@ -26,8 +24,6 @@ kubectl exec --stdin --tty predict-598d9fd9f4-hww9k -- /bin/bash
 & minikube -p minikube docker-env --shell powershell | Invoke-Expression
 #linux 
 eval $(minikube -p snoring docker-env --shell bash)
-
-
 
 
 # mongodb replicaset initiate
@@ -49,11 +45,22 @@ curl -d '{"instances": [1.0, 2.0, 5.0]}' -X POST http://snoring:8501/v1/models/s
 # mysql test
 
 # Connect to the database
-connection = pymysql.connect(host= "34.121.11.218",
+
+db =_mysql.connect(host="mysql.mysql-1",port=3306,database="test")
+
+
+connection = pymysql.connect(host= "10.244.0.27",
                              database='test',
                              port = 3306,
-							 user='bpoudel',
-                             password='bpoudel',
+							          user='',
+                             password='',
+                             cursorclass=pymysql.cursors.DictCursor)
+
+connection = pymysql.connect(host= "mysql",
+                             database='test',
+                             port = 3306,
+							       user='',
+                             password='',
                              cursorclass=pymysql.cursors.DictCursor)
 							 
 with connection.cursor() as cursor:

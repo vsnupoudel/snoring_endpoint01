@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: register
-          image: us-central1-docker.pkg.dev/turnkey-banner-371806/hello-repo/register:pd
+          image: bishnupoudel/register:sqlminimal
           imagePullPolicy: IfNotPresent
           envFrom:
             - configMapRef:
