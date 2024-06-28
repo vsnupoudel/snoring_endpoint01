@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import './Login.css'; // Import the CSS file
 
 const Login = ( props ) => {
-  const [identifier, setIdentifier] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [mydata, setMydata] = useState({"mydata":"nodata"})
 
@@ -13,8 +13,40 @@ const Login = ( props ) => {
     toggleLogin();
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+      // Create an object with user data
+      const userData = {
+        username,
+        password,
+      };
+  
+      console.log (JSON.stringify(userData) )
+
+      
+    try {
+      // Make the API request
+      const response = await fetch('http://localhost:8080/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      });
+
+      if (response.ok) {
+        // Handle successful response (e.g., show a success message)
+        const text = await response.json();
+        console.log('API response:', text);   
+      } else {
+        // Handle errors (e.g., show an error message)
+        console.error('Error registering user:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error during API call:', error);
+    }
+
   };
 
   return (
@@ -25,8 +57,8 @@ const Login = ( props ) => {
           Username or Email:
           <input
             type="text"
-            value={identifier}
-            onChange={(e) => setIdentifier(e.target.value)}
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
           />
         </label>
         <label>

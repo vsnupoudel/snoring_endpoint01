@@ -10,11 +10,15 @@ const Signup = ( props ) => {
   const [password, setPassword] = useState('');
   const [repeatPassword, setRepeatPassword] = useState('');
 
+  const {  showLogin, toggleLogin} = props;
+
+
+  const onLoginClick = () => {
+    toggleLogin()
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const {  showLogin, toggleLogin} = props;
-
 
     // Create an object with user data
     const userData = {
@@ -109,6 +113,16 @@ const Signup = ( props ) => {
     )}
       </label>
       <button type="submit">Sign Up</button>
+
+      <div className='login-button-in-signup'>  
+      <p>
+         Already have an account? 
+        <br></br>
+      </p>
+      <button onClick={onLoginClick}>Log In</button>
+      </div>
+
+
     </form>
   );
 };
