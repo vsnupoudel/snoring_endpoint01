@@ -8,7 +8,7 @@ import { useState } from 'react';
 
 function App() {
   const [showLogin, setShowLogin] = useState(false);
-  const [showSignup, setShowSignup] = useState(true);
+  // const [showSignup, setShowSignup] = useState(true);
 
   const toggleLogin = () => {
     setShowLogin(!showLogin);
@@ -19,7 +19,7 @@ function App() {
       <header className="App-header">
       <div>
       {showLogin ? (
-        <Login  />
+        <Login  showLogin={showLogin} toggleLogin={toggleLogin}/>
       ) : (
         <Signup showLogin={showLogin} toggleLogin={toggleLogin}/>
       )}

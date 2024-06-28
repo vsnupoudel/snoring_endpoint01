@@ -2,18 +2,24 @@
 import React, { useState } from 'react';
 import './Login.css'; // Import the CSS file
 
-const Login = ({ onSubmit, onSignupClick, msg }) => {
+const Login = ( props ) => {
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
+  const [mydata, setMydata] = useState({"mydata":"nodata"})
+
+  const { showLogin, toggleLogin} = props;
+   
+  function onSignupClick() {
+    toggleLogin();
+  }
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(identifier, password);
   };
 
   return (
     <div>
-      <div>{msg}</div>
+      <div>Please login</div>
       <form onSubmit={handleSubmit}>
         <label>
           Username or Email:
@@ -33,9 +39,15 @@ const Login = ({ onSubmit, onSignupClick, msg }) => {
         </label>
         <button type="submit">Log In</button>
       </form>
+
+      <div className='signup-button-in-login'>  
       <p>
-        Don't have an account? <button onClick={onSignupClick}>Sign Up</button>
+        Don't have an account? 
+        <br></br>
       </p>
+      <button onClick={onSignupClick}>Sign Up</button>
+      </div>
+
     </div>
   );
 };

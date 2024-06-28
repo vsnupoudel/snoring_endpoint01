@@ -1,9 +1,11 @@
 # Store this code in 'app.py' file
-import os
+import os, re
 from flask import Flask, jsonify, render_template, request, redirect, url_for, session
 from flask import send_file, stream_with_context, Response
 from flask_cors import CORS
 from flask_bcrypt import Bcrypt
+from flask_mysqldb import MySQL
+
 
 # from model.myconnection import connect_to_mysql
 
@@ -24,7 +26,7 @@ from flask_bcrypt import Bcrypt
 # import gridfs
 # import requests
 # from bson import ObjectId
-# import pymysql
+
 
 app = Flask(__name__)
 app.secret_key = 'TODO'
@@ -39,6 +41,16 @@ bcrypt = Bcrypt(app)
 # app.config['MYSQL_USER']     =  os.environ.get('MYSQL_USER')
 # app.config['MYSQL_PASSWORD'] = os.environ.get('MYSQL_PASSWORD')
 # mysql = MySQL(app)
+# Configure MySQL connection details
+app.config['MYSQL_HOST'] = 'localhost'
+app.config['MYSQL_USER'] = 'bpoudelk'
+app.config['MYSQL_PASSWORD'] = 'bpoudelkm'
+app.config['MYSQL_DB'] = 'snoring'
+app.config["MYSQL_PORT"] = 3306
+
+# Initialize MySQL
+mysql = MySQL(app)
+
 
 # #mongodb
 # mongo_wav = PyMongo(app,
@@ -57,21 +69,6 @@ def index():
 
 @app.route('/register', methods =['POST'])
 def register():
-	# cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-	# cursor.execute('SELECT * FROM accounts WHERE username = % s', (username, ))
-	# account = cursor.fetchone()
-	# if account:
-	# 	msg = 'Account already exists !'
-	# elif not re.match(r'[^@]+@[^@]+\.[^@]+', email):
-	# 	msg = 'Invalid email address !'
-	# elif not re.match(r'[A-Za-z0-9]+', username):
-	# 	msg = 'Username must contain only characters and numbers !'
-	# elif not username or not password or not email:
-	# 	msg = 'Please fill out the form !'
-	# else:
-	# 	cursor.execute('INSERT INTO accounts VALUES (NULL,% s, % s, % s, % s, % s)', (firstname, lastname_middlenames, username, password, email, ))
-	# 	mysql.connection.commit()
-	# 	cursor.close() 
 	try:
 		# Get the JSON data from the request
 		data = request.get_json()
@@ -82,8 +79,33 @@ def register():
 		username = data.get('username')
 		email = data.get('email')
 
+
+		# Insert into local mysql database
+		with app.app_context():
+			cur = mysql.connection.cursor()
+			cur.execute('SELECT * FROM users WHERE username = %s', (username,))
+			account = cur.fetchone()
+			if account:
+				raise ValueError('Account already exists!')
+		
+			
+		if not re.match(r'[^@]+@[^@]+\.[^@]+', email):
+			raise ValueError('Invalid email address!')
+		if not re.match(r'[A-Za-z0-9]+', username):
+			raise ValueError('Username must contain only characters and numbers!')
+		if not username or not data.get('password') or not email:
+			raise ValueError('Please fill out the form!')
+		
+		
 		# Hash the password
 		hashed_password = bcrypt.generate_password_hash(data.get('password')).decode('utf-8')
+		# Insert into local mysql database
+		with app.app_context():
+			cur = mysql.connection.cursor()
+			cur.execute("INSERT INTO users (username, email, password ) VALUES (%s, %s, %s)",
+				(username, email, hashed_password))
+			mysql.connection.commit()
+		
 
 		return jsonify({"firstName": firstName,
 				 "lastName": lastName,

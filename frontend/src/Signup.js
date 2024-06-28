@@ -104,6 +104,9 @@ const Signup = ( props ) => {
           onChange={(e) => setRepeatPassword(e.target.value)}
           required
         />
+        {password !== repeatPassword && (
+      <p style={{ color: 'red' }}>Passwords do not match</p>
+    )}
       </label>
       <button type="submit">Sign Up</button>
     </form>
