@@ -1,7 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: snoring-configs
-data:
-  MODEL_NAME: snoring_or_not
-  MODEL_PATH: /models/snoring_or_not
