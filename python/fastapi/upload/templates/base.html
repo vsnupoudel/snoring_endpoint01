@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}My FastAPI App{% endblock %}</title>
+</head>
+<body>
+    <header>
+        <h1>{% block header %}Welcome to My FastAPI App{% endblock %}</h1>
+    </header>
+    
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer>
+        <p>&copy; 2025 My FastAPI App</p>
+    </footer>
+</body>
+</html>
