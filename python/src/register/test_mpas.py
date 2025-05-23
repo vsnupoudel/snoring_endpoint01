@@ -32,15 +32,15 @@ def split_generator(waveform, chunk_size=16000):
     #         yield waveform[start_index-chunk_size:start_index + chunk_size].tolist()
     #     start_index += chunk_size
 
-    return ( 
-    waveform[index-chunk_size:index + chunk_size].tolist() for index in range(start_index, end_index, chunk_size)
-    if waveform[index] > 0.0 
-    )
+    # return ( 
+    # waveform[index-chunk_size:index + chunk_size].tolist() for index in range(start_index, end_index, chunk_size)
+    # if waveform[index] > 0.0 
+    # )
     
-    # return [
-    #     waveform[index-chunk_size:index + chunk_size] for index in range(start_index, end_index, chunk_size)
-    #     if waveform[index] > 0.0 
-    #     ]
+    return [
+        waveform[index-chunk_size:index + chunk_size].tolist() for index in range(start_index, end_index, chunk_size)
+        if waveform[index] > 0.0 
+        ]
 
 
 import aiohttp
@@ -60,17 +60,9 @@ async def req_mp_async(wave: list):
         except Exception as e:
             return {"error": str(e)}
 
-# # Example usage
-# async def main():
-#     wave = [...]  # Your data here
-#     result = await req_mp_async(wave)
-#     print(result)
-
-# # Run the async function
-# asyncio.run(main())
     
 if __name__ == "__main__":
-    import sys, asyncio
+    import sys, asyncio, time
     import multiprocessing  as mp
     if len(sys.argv) > 1:
         file = sys.argv[1]
@@ -84,7 +76,11 @@ if __name__ == "__main__":
     async def runas(wave):
         return await req_mp_async(wave)
 
-
     # Run the async function
+    t0 = time.time()
     results = [  asyncio.run(runas(wav)) for wav in waveform ]
-    print(results)
+    t1 = time.time()
+    print( f" \n\n {results} \n\n")
+    print(f"Time taken: {t1 - t0} seconds") 
+
+

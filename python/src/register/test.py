@@ -1,6 +1,7 @@
 from scipy.io import wavfile
 from scipy.signal import resample
 import numpy as np
+import requests, json
 
 # Ensure sample rate
 def ensure_sample_rate(original_sample_rate, waveform, desired_sample_rate=16000):
@@ -26,23 +27,48 @@ def split_generator(waveform, chunk_size=16000):
     """
     start_index = chunk_size
     end_index = len(waveform) - 1 
-    while start_index+chunk_size < end_index:
-        if waveform[start_index] > 0.0:
-            yield waveform[start_index-chunk_size:start_index + chunk_size]
-        start_index += chunk_size
+    # while start_index+chunk_size < end_index:
+    #     if waveform[start_index] > 0.0:
+    #         yield waveform[start_index-chunk_size:start_index + chunk_size].tolist()
+    #     start_index += chunk_size
+
+    # return ( 
+    # waveform[index-chunk_size:index + chunk_size].tolist() for index in range(start_index, end_index, chunk_size)
+    # if waveform[index] > 0.0 
+    # )
     
-if __name__ == "__main__":
-  import sys, requests, json
-  if len(sys.argv) > 1:
-    file = sys.argv[1]
-  waveform = read_and_normalise(file)
-  waveform = [ chunk.tolist() for chunk in split_generator(waveform)]
-  print(  [len(wav) for wav in waveform])
- # Send request to the prediction service
-  for wave in waveform:
+    return [
+        waveform[index-chunk_size:index + chunk_size].tolist() for index in range(start_index, end_index, chunk_size)
+        if waveform[index] > 0.0 
+        ]
+
+
+def req_mp(wave: list):
     url = 'http://snoring:8501/v1/models/snoring_or_not:predict'
     payload = {"instances": wave}
-    response = requests.post(url, json=payload)
-    response.raise_for_status()
-    results = json.loads(response.text)['predictions']
-    print(results)
+    try:
+        response = requests.post(url, json=payload)
+        response.raise_for_status()
+        result = response.json().get('predictions', {})  #json.loads(response.text)['predictions']
+    except Exception as e:
+        return {"error": str(e)}    
+
+    return result
+    
+if __name__ == "__main__":
+    import sys, time
+    import multiprocessing  as mp
+    if len(sys.argv) > 1:
+        file = sys.argv[1]
+    waveform = read_and_normalise(file)
+    waveform = split_generator(waveform)
+    
+    t0 = time.time()
+    # with mp.Pool(processes=mp.cpu_count()) as pool:
+    #     results = pool.map(req_mp, waveform)
+
+    results = [ req_mp(wave) for wave in waveform]
+    
+    t1 = time.time()
+    print(f"\n\n {results} \n\n")
+    print(f"Time taken: {t1-t0} seconds")

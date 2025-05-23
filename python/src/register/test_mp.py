@@ -32,15 +32,15 @@ def split_generator(waveform, chunk_size=16000):
     #         yield waveform[start_index-chunk_size:start_index + chunk_size].tolist()
     #     start_index += chunk_size
 
-    return ( 
-    waveform[index-chunk_size:index + chunk_size].tolist() for index in range(start_index, end_index, chunk_size)
-    if waveform[index] > 0.0 
-    )
+    # return ( 
+    # waveform[index-chunk_size:index + chunk_size].tolist() for index in range(start_index, end_index, chunk_size)
+    # if waveform[index] > 0.0 
+    # )
     
-    # return [
-    #     waveform[index-chunk_size:index + chunk_size] for index in range(start_index, end_index, chunk_size)
-    #     if waveform[index] > 0.0 
-    #     ]
+    return [
+        waveform[index-chunk_size:index + chunk_size].tolist() for index in range(start_index, end_index, chunk_size)
+        if waveform[index] > 0.0 
+        ]
 
 
 def req_mp(wave: list):
@@ -56,16 +56,19 @@ def req_mp(wave: list):
     return result
     
 if __name__ == "__main__":
-    import sys
+    import sys, time
     import multiprocessing  as mp
     if len(sys.argv) > 1:
         file = sys.argv[1]
     waveform = read_and_normalise(file)
     waveform = split_generator(waveform)
     
-    with mp.Pool(processes=mp.cpu_count()) as pool:
+    t0 = time.time()
+    with mp.Pool(processes= 3) as pool:
         results = pool.map(req_mp, waveform)
 
     # results = [ req_mp(wave) for wave in waveform]
-
-    print(results)
+    
+    t1 = time.time()
+    print(f"\n\n {results} \n\n")
+    print(f"Time taken: {t1-t0} seconds")
