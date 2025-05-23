@@ -27,10 +27,21 @@ def split_generator(waveform, chunk_size=16000):
     """
     start_index = chunk_size
     end_index = len(waveform) - 1 
-    while start_index+chunk_size < end_index:
-        if waveform[start_index] > 0.0:
-            yield waveform[start_index-chunk_size:start_index + chunk_size]
-        start_index += chunk_size
+    # while start_index+chunk_size < end_index:
+    #     if waveform[start_index] > 0.0:
+    #         yield waveform[start_index-chunk_size:start_index + chunk_size].tolist()
+    #     start_index += chunk_size
+
+    return ( 
+    waveform[index-chunk_size:index + chunk_size].tolist() for index in range(start_index, end_index, chunk_size)
+    if waveform[index] > 0.0 
+    )
+    
+    # return [
+    #     waveform[index-chunk_size:index + chunk_size] for index in range(start_index, end_index, chunk_size)
+    #     if waveform[index] > 0.0 
+    #     ]
+
 
 def req_mp(wave: list):
     url = 'http://snoring:8501/v1/models/snoring_or_not:predict'
@@ -50,11 +61,11 @@ if __name__ == "__main__":
     if len(sys.argv) > 1:
         file = sys.argv[1]
     waveform = read_and_normalise(file)
-    waveform = [ chunk.tolist() for chunk in split_generator(waveform)]
-    # print(  [len(wav) for wav in waveform])
-    # Send request to the prediction service
+    waveform = split_generator(waveform)
     
-    # with mp.Pool(processes=mp.cpu_count()) as pool:
-    #     results = pool.map(req_mp, waveform)
+    with mp.Pool(processes=mp.cpu_count()) as pool:
+        results = pool.map(req_mp, waveform)
 
-    results = [ req_mp(wave) for wave in waveform]
+    # results = [ req_mp(wave) for wave in waveform]
+
+    print(results)
