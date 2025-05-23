@@ -43,29 +43,48 @@ def split_generator(waveform, chunk_size=16000):
     #     ]
 
 
-def req_mp(wave: list):
+import aiohttp
+import asyncio
+import json
+
+async def req_mp_async(wave: list):
     url = 'http://snoring:8501/v1/models/snoring_or_not:predict'
     payload = {"instances": wave}
-    try:
-        response = requests.post(url, json=payload)
-        response.raise_for_status()
-        result = response.json().get('predictions', {})  #json.loads(response.text)['predictions']
-    except Exception as e:
-        return {"error": str(e)}    
 
-    return result
+    async with aiohttp.ClientSession() as session:
+        try:
+            async with session.post(url, json=payload) as response:
+                response.raise_for_status()
+                result = await response.json()
+                return result.get('predictions', {})
+        except Exception as e:
+            return {"error": str(e)}
+
+# # Example usage
+# async def main():
+#     wave = [...]  # Your data here
+#     result = await req_mp_async(wave)
+#     print(result)
+
+# # Run the async function
+# asyncio.run(main())
     
 if __name__ == "__main__":
-    import sys
+    import sys, asyncio
     import multiprocessing  as mp
     if len(sys.argv) > 1:
         file = sys.argv[1]
     waveform = read_and_normalise(file)
     waveform = split_generator(waveform)
     
-    with mp.Pool(processes=mp.cpu_count()) as pool:
-        results = pool.map(req_mp, waveform)
+    # with mp.Pool(processes=mp.cpu_count()) as pool:
+    #     results = pool.map(req_mp_async, waveform
 
-    # results = [ req_mp(wave) for wave in waveform]
+    # Example usage
+    async def runas(wave):
+        return await req_mp_async(wave)
 
+
+    # Run the async function
+    results = [  asyncio.run(runas(wav)) for wav in waveform ]
     print(results)
