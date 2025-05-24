@@ -67,7 +67,7 @@ if __name__ == "__main__":
     # with mp.Pool(processes=mp.cpu_count()) as pool:
     #     results = pool.map(req_mp, waveform)
 
-    results = [ req_mp(wave) for wave in waveform]
+    results = [ req_mp( next(waveform) ) for i in range(30)]
     
     t1 = time.time()
     print(f"\n\n {len(results)} , {results[-2:]} \n\n")

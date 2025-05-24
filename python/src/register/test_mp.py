@@ -64,9 +64,9 @@ if __name__ == "__main__":
     waveform = split_generator(waveform)
     
     t0 = time.time()
-    with mp.Pool(processes= 3) as pool:
-        results = pool.map(req_mp, waveform)
-
+    with mp.Pool(processes= mp.cpu_count() ) as pool:
+        results = pool.map(req_mp, [next(waveform) for i in range(30)]  )
+ 
     # results = [ req_mp(wave) for wave in waveform]
     
     t1 = time.time()

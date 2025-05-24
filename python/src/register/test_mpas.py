@@ -2,6 +2,9 @@ from scipy.io import wavfile
 from scipy.signal import resample
 import numpy as np
 import requests, json
+import aiohttp
+import asyncio
+import json
 
 # Ensure sample rate
 def ensure_sample_rate(original_sample_rate, waveform, desired_sample_rate=16000):
@@ -43,9 +46,7 @@ def split_generator(waveform, chunk_size=16000):
     #     ]
 
 
-import aiohttp
-import asyncio
-import json
+
 
 async def req_mp_async(wave: list):
     url = 'http://snoring:8501/v1/models/snoring_or_not:predict'
@@ -73,12 +74,13 @@ if __name__ == "__main__":
     #     results = pool.map(req_mp_async, waveform
 
     # Example usage
-    async def runas(wave):
-        return await req_mp_async(wave)
+    async def runas(waveform):
+        return await asyncio.gather(  *( req_mp_async(next( waveform )) for _ in range(30) ) 
+                                 )
 
     # Run the async function
     t0 = time.time()
-    results = [  asyncio.run(runas(wav)) for wav in waveform ]
+    results = asyncio.run(runas(waveform))
     t1 = time.time()
     print(f"\n\n {len(results)} , {results[-2:]} \n\n")
     print(f"Time taken: {t1 - t0} seconds") 
