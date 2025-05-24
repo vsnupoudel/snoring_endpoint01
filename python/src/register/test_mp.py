@@ -32,15 +32,15 @@ def split_generator(waveform, chunk_size=16000):
     #         yield waveform[start_index-chunk_size:start_index + chunk_size].tolist()
     #     start_index += chunk_size
 
-    # return ( 
-    # waveform[index-chunk_size:index + chunk_size].tolist() for index in range(start_index, end_index, chunk_size)
-    # if waveform[index] > 0.0 
-    # )
+    return ( 
+    waveform[index-chunk_size:index + chunk_size].tolist() for index in range(start_index, end_index, chunk_size)
+    if waveform[index] > 0.0 
+    )
     
-    return [
-        waveform[index-chunk_size:index + chunk_size].tolist() for index in range(start_index, end_index, chunk_size)
-        if waveform[index] > 0.0 
-        ]
+    # return [
+    #     waveform[index-chunk_size:index + chunk_size].tolist() for index in range(start_index, end_index, chunk_size)
+    #     if waveform[index] > 0.0 
+    #     ]
 
 
 def req_mp(wave: list):
@@ -70,5 +70,5 @@ if __name__ == "__main__":
     # results = [ req_mp(wave) for wave in waveform]
     
     t1 = time.time()
-    print(f"\n\n {results} \n\n")
+    print(f"\n\n {len(results)} , {results[-2:]} \n\n")
     print(f"Time taken: {t1-t0} seconds")
